@@ -1,92 +1,117 @@
 package ru.skillbranch.devintensive.utils
 
-import android.content.Context
-import kotlin.math.roundToInt
-
-
 object Utils {
+
+    private val translitMap = mapOf(
+        'а' to "a",
+        'б' to "b",
+        'в' to "v",
+        'г' to "g",
+        'д' to "d",
+        'е' to "e",
+        'ё' to "e",
+        'ж' to "zh",
+        'з' to "z",
+        'и' to "i",
+        'й' to "i",
+        'к' to "k",
+        'л' to "l",
+        'м' to "m",
+        'н' to "n",
+        'о' to "o",
+        'п' to "p",
+        'р' to "r",
+        'с' to "s",
+        'т' to "t",
+        'у' to "u",
+        'ф' to "f",
+        'х' to "h",
+        'ц' to "c",
+        'ч' to "ch",
+        'ш' to "sh",
+        'щ' to "sh",
+        'ъ' to "",
+        'ы' to "i",
+        'ь' to "",
+        'э' to "e",
+        'ю' to "yu",
+        'я' to "ya"
+    )
+
     fun parseFullName(fullName: String?): Pair<String?, String?> {
-        val parts = fullName?.trim()?.split(" ")
-        val firstName = parts?.getOrNull(0)?.ifEmpty { null }
-        val lastName = parts?.getOrNull(1)?.ifEmpty { null }
+        val parts: List<String>? = fullName?.trim()?.replace(Regex(" +"), " ")?.split(" ")
+
+        val firstName = parts?.notEmptyOrNullAt(0)
+        val lastName = parts?.notEmptyOrNullAt(1)
 
         return firstName to lastName
     }
 
+    private fun List<String>.notEmptyOrNullAt(index: Int) = getOrNull(index).let {
+        if ("" == it) null
+        else it
+    }
+
     fun transliteration(payload: String, divider: String = " "): String {
-        val map = fillTranslitMap()
-        val builder = StringBuilder()
-
-        for (char in payload.trim())
-            builder.append(getTranslChar(char, map))
-
-        return builder.toString().replace(" ", divider)
+        var result = ""
+        payload.forEach {
+            result += when {
+                it == ' ' -> divider
+                it.isUpperCase() -> translitMap[it.toLowerCase()]?.capitalize() ?: it.toString()
+                else -> translitMap[it] ?: it.toString()
+            }
+        }
+        return result
     }
 
-    private fun getTranslChar(char: Char, map: HashMap<Char, String>): String {
-        val transl = map[char.toLowerCase()] ?: char.toString()
-
-        return if (char.isUpperCase() && transl.isNotEmpty())
-            transl.capitalize()
-        else transl
+    fun toInitials(firstName: String?, lastName: String?): String? = when {
+        firstName.isNullOrBlank() && lastName.isNullOrBlank() -> null
+        !firstName.isNullOrBlank() && lastName.isNullOrBlank() -> firstName[0].toUpperCase()
+            .toString()
+        firstName.isNullOrBlank() && !lastName.isNullOrBlank() -> lastName[0].toUpperCase()
+            .toString()
+        !firstName.isNullOrBlank() && !lastName.isNullOrBlank() -> firstName[0].toUpperCase() + lastName[0].toUpperCase()
+            .toString()
+        else -> throw IllegalStateException("Incorrect state in 'when' expression")
     }
 
-    private fun fillTranslitMap(): HashMap<Char, String> {
-        val map = hashMapOf<Char, String>()
-        map['а'] = "a"
-        map['б'] = "b"
-        map['в'] = "v"
-        map['г'] = "g"
-        map['д'] = "d"
-        map['е'] = "e"
-        map['ё'] = "e"
-        map['ж'] = "zh"
-        map['з'] = "z"
-        map['и'] = "i"
-        map['й'] = "i"
-        map['к'] = "k"
-        map['л'] = "l"
-        map['м'] = "m"
-        map['н'] = "n"
-        map['о'] = "o"
-        map['п'] = "p"
-        map['р'] = "r"
-        map['с'] = "s"
-        map['т'] = "t"
-        map['у'] = "u"
-        map['ф'] = "f"
-        map['х'] = "h"
-        map['ц'] = "c"
-        map['ч'] = "ch"
-        map['ш'] = "sh"
-        map['щ'] = "sh'"
-        map['ъ'] = ""
-        map['ы'] = "i"
-        map['ь'] = ""
-        map['э'] = "e"
-        map['ю'] = "yu"
-        map['я'] = "ya"
+    fun isRepositoryValid(repository: String): Boolean {
+        if (repository.isEmpty()) return true
+        var repo = repository
 
-        return map
+        if (repo.startsWith("https://")) {
+            repo = repo.replace("https://", "")
+        }
+        if (repo.startsWith("www.")) {
+            repo = repo.replace("www.", "")
+        }
+
+        if (!repo.startsWith("github.com/")) {
+            return false
+        }
+
+        repo = repo.replace("github.com/", "")
+
+        repoExcludeSet.forEach {
+            if (repo.startsWith(it) && (repo.length == it.length || repo[it.length] == '/')) return false
+        }
+
+        return Regex("^[A-Za-z0-9]+(-[A-Za-z0-9]+)*/?$").matches(repo)
     }
 
-    fun toInitials(firstName: String?, lastName: String?): String? {
-        val name = firstName.orEmpty().trim().getOrNull(0)?.toUpperCase()
-        val surname = lastName.orEmpty().trim().getOrNull(0)?.toUpperCase()
-        val firstInit = name?.toString() ?: ""
-        val secondInit = surname?.toString() ?: ""
-        return "$firstInit$secondInit".ifEmpty { null }
-    }
-
-    fun convertPxToDp(context: Context, px: Int): Int {
-        return (px / context.resources.displayMetrics.density).roundToInt()
-    }
-
-    fun convertDpToPx(context: Context, dp: Float): Int {
-        return (dp * context.resources.displayMetrics.density).roundToInt()
-    }
-
-    fun convertSpToPx(context: Context, sp: Int): Int {
-        return sp * context.resources.displayMetrics.scaledDensity.roundToInt()
-    }
+    private val repoExcludeSet = setOf(
+        "enterprise",
+        "features",
+        "topics",
+        "collections",
+        "trending",
+        "events",
+        "marketplace",
+        "pricing",
+        "nonprofit",
+        "customer-stories",
+        "security",
+        "login",
+        "join"
+    )
 }

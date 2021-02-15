@@ -16,9 +16,9 @@ import ru.skillbranch.devintensive.ui.custom.AvatarImageView
 
 class UserAdapter(
     val listener: (UserItem) -> Unit
-) : RecyclerView.Adapter<UserAdapter.UserVH>() {
+) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
-    private var items = listOf<UserItem>()
+    var items = listOf<UserItem>()
 
     fun updateData(data: List<UserItem>) {
         val diffCallback = object : DiffUtil.Callback() {
@@ -36,19 +36,19 @@ class UserAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.item_user_list, parent, false)
-        return UserVH(itemView)
+        return UserViewHolder(itemView)
     }
 
     override fun getItemCount() = items.size
 
-    override fun onBindViewHolder(holder: UserVH, position: Int) {
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         holder.bind(items[position], listener)
     }
 
-    class UserVH(
+    class UserViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 

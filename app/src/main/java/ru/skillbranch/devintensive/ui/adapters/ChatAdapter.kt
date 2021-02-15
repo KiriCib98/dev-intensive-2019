@@ -17,7 +17,7 @@ import ru.skillbranch.devintensive.ui.custom.AvatarImageView
 
 class ChatAdapter(
     val listener: (ChatItem) -> Unit
-) : RecyclerView.Adapter<ChatAdapter.ChatItemVH>() {
+) : RecyclerView.Adapter<ChatAdapter.ChatItemViewHolder>() {
 
     companion object {
         private const val ARCHIVE_TYPE = 0
@@ -45,16 +45,22 @@ class ChatAdapter(
 
     override fun getItemCount() = items.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatItemVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            SINGLE_TYPE -> SingleVH(inflater.inflate(R.layout.item_chat_single, parent, false))
-            GROUP_TYPE -> GroupVH(inflater.inflate(R.layout.item_chat_group, parent, false))
-            else -> GroupVH(inflater.inflate(R.layout.item_chat_group, parent, false))
+            SINGLE_TYPE -> SingleViewHolder(
+                inflater.inflate(
+                    R.layout.item_chat_single,
+                    parent,
+                    false
+                )
+            )
+            GROUP_TYPE -> GroupViewHolder(inflater.inflate(R.layout.item_chat_group, parent, false))
+            else -> GroupViewHolder(inflater.inflate(R.layout.item_chat_group, parent, false))
         }
     }
 
-    override fun onBindViewHolder(holder: ChatItemVH, position: Int) {
+    override fun onBindViewHolder(holder: ChatItemViewHolder, position: Int) {
         holder.bind(items[position], listener)
     }
 
@@ -64,15 +70,15 @@ class ChatAdapter(
         ChatType.GROUP -> GROUP_TYPE
     }
 
-    abstract inner class ChatItemVH(
+    abstract inner class ChatItemViewHolder(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
         abstract fun bind(item: ChatItem, listener: (ChatItem) -> Unit)
     }
 
-    inner class SingleVH(
+    inner class SingleViewHolder(
         override val containerView: View
-    ) : ChatItemVH(containerView), ItemTouchViewHolder {
+    ) : ChatItemViewHolder(containerView), ItemTouchViewHolder {
 
         override fun onItemSelected() {
             itemView.setBackgroundColor(Color.LTGRAY)
@@ -114,9 +120,9 @@ class ChatAdapter(
         }
     }
 
-    inner class GroupVH(
+    inner class GroupViewHolder(
         override val containerView: View
-    ) : ChatItemVH(containerView), ItemTouchViewHolder {
+    ) : ChatItemViewHolder(containerView), ItemTouchViewHolder {
 
         override fun onItemSelected() {
             itemView.setBackgroundColor(Color.LTGRAY)

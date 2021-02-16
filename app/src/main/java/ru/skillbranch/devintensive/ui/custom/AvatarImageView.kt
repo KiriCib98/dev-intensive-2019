@@ -17,6 +17,7 @@ import androidx.annotation.Dimension.DP
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import ru.skillbranch.devintensive.R
+import ru.skillbranch.devintensive.extensions.InitialsDrawable
 import kotlin.math.min
 import kotlin.math.pow
 

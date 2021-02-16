@@ -1,10 +1,10 @@
 package ru.skillbranch.devintensive.utils
 
 import android.util.Log
+import ru.skillbranch.devintensive.extensions.TextMessage
 import ru.skillbranch.devintensive.extensions.TimeUnits
 import ru.skillbranch.devintensive.extensions.add
 import ru.skillbranch.devintensive.models.BaseMessage
-import ru.skillbranch.devintensive.models.TextMessage
 import ru.skillbranch.devintensive.models.data.Chat
 import ru.skillbranch.devintensive.models.data.User
 import java.util.*

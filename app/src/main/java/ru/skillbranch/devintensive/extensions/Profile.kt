@@ -1,4 +1,4 @@
-package ru.skillbranch.devintensive.models
+package ru.skillbranch.devintensive.extensions
 
 import ru.skillbranch.devintensive.utils.Utils
 

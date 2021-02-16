@@ -1,4 +1,4 @@
-package ru.skillbranch.devintensive.ui.custom
+package ru.skillbranch.devintensive.extensions
 
 import android.content.Context
 import android.util.AttributeSet

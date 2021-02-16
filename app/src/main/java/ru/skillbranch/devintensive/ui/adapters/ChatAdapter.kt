@@ -13,7 +13,7 @@ import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.extensions.visible
 import ru.skillbranch.devintensive.models.data.ChatItem
 import ru.skillbranch.devintensive.models.data.ChatType
-import ru.skillbranch.devintensive.ui.custom.AvatarImageView
+import ru.skillbranch.devintensive.ui.custom.CircleImageView
 
 class ChatAdapter(
     val listener: (ChatItem) -> Unit
@@ -91,9 +91,9 @@ class ChatAdapter(
         override fun bind(item: ChatItem, listener: (ChatItem) -> Unit) {
             if (item.avatar == null) {
                 Glide.with(itemView)
-                    .clear(itemView.findViewById<AvatarImageView>(R.id.iv_avatar_single))
-                itemView.findViewById<AvatarImageView>(R.id.iv_avatar_single).initials =
-                    item.initials
+                        .clear(itemView.findViewById<CircleImageView>(R.id.iv_avatar_single))
+                itemView.findViewById<CircleImageView>(R.id.iv_avatar_single).initials =
+                        item.initials
             } else {
                 Glide.with(itemView)
                     .load(item.avatar)
@@ -133,7 +133,7 @@ class ChatAdapter(
         }
 
         override fun bind(item: ChatItem, listener: (ChatItem) -> Unit) {
-            itemView.findViewById<AvatarImageView>(R.id.iv_avatar_group).initials = item.initials
+            itemView.findViewById<CircleImageView>(R.id.iv_avatar_group).initials = item.initials
 
             with(itemView.findViewById<TextView>(R.id.tv_date_group)) {
                 visible = item.lastMessageDate != null

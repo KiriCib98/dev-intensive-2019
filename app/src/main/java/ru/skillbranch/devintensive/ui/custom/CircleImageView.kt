@@ -21,10 +21,10 @@ import ru.skillbranch.devintensive.extensions.InitialsDrawable
 import kotlin.math.min
 import kotlin.math.pow
 
-class AvatarImageView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet,
-    defStyle: Int = 0
+class CircleImageView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet,
+        defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle) {
 
     companion object {

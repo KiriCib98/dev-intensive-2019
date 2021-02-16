@@ -1,10 +1,10 @@
 package ru.skillbranch.devintensive.utils
 
 import android.util.Log
-import ru.skillbranch.devintensive.extensions.TextMessage
 import ru.skillbranch.devintensive.extensions.TimeUnits
 import ru.skillbranch.devintensive.extensions.add
 import ru.skillbranch.devintensive.models.BaseMessage
+import ru.skillbranch.devintensive.models.TextMessage
 import ru.skillbranch.devintensive.models.data.Chat
 import ru.skillbranch.devintensive.models.data.User
 import java.util.*
@@ -115,7 +115,6 @@ object DataGenerator {
         "Jimmy",
         "Antonio"
     )
-
     private val femaleNames = listOf(
         "Mary",
         "Patricia",
@@ -217,7 +216,6 @@ object DataGenerator {
         "Lillian",
         "Emily"
     )
-
     private val lastNames = listOf(
         "Smith",
         "Johnson",
@@ -320,7 +318,6 @@ object DataGenerator {
         "Diaz",
         "Hayes"
     )
-
     private val maleAvatars = listOf(
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/man0.png",
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/man1.png",
@@ -333,7 +330,6 @@ object DataGenerator {
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/man8.png",
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/man9.png"
     )
-
     private val femaleAvatars = listOf(
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/woman0.png",
         "https://skill-branch.ru/resources/dev-intensive-2019/avatars/woman1.png",
@@ -396,7 +392,7 @@ object DataGenerator {
         return list
     }
 
-    fun generateChats(count: Int, hasGroups: Boolean = false): List<Chat> {
+    public fun generateChats(count: Int, hasGroups: Boolean = false): List<Chat> {
         val list = mutableListOf<Chat>()
         val users = generateUsers(count)
         for (user in users) {
@@ -424,7 +420,7 @@ object DataGenerator {
         return list
     }
 
-    fun generateChatsWithOffset(startId: Int, count: Int): List<Chat> {
+    public fun generateChatsWithOffset(startId: Int, count: Int): List<Chat> {
         val list = mutableListOf<Chat>()
         val users = generateUsers(count)
         for (user in users) {
@@ -451,7 +447,7 @@ object DataGenerator {
                     chat,
                     true,
                     user.lastVisit ?: Date(),
-                    true,
+                    false,
                     randomTextPayload()
                 )
             )
@@ -498,4 +494,5 @@ object DataGenerator {
             else -> Pair(null, false)
         }
     }
+
 }

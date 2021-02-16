@@ -7,20 +7,20 @@ import ru.skillbranch.devintensive.repositories.PreferencesRepository
 
 class App : Application() {
 
+    companion object {
+        private var instance: App? = null
+
+        fun applicationContext(): Context = instance!!.applicationContext
+    }
+
     init {
         instance = this
     }
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setDefaultNightMode(PreferencesRepository.theme)
-    }
-
-    companion object {
-        private lateinit var instance: App
-
-        fun applicationContext(): Context {
-            return instance.applicationContext
+        PreferencesRepository.getAppTheme().also {
+            AppCompatDelegate.setDefaultNightMode(it)
         }
     }
 }

@@ -1,10 +1,11 @@
-package ru.skillbranch.devintensive.extensions
+package ru.skillbranch.devintensive.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ImageView
 import ru.skillbranch.devintensive.R
 
+// @JvmOverloads при компиляции будет создано 3 конструктора, для каждого из возможных аргументов
 class AspectRatioImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -12,7 +13,7 @@ class AspectRatioImageView @JvmOverloads constructor(
 ) : ImageView(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val DEFAULT_ASPECT_RATIO = 1.78f
+        private const val DEFAULT_ASPECT_RATIO = 1.78f // 16:9
     }
 
     private var aspectRatio = DEFAULT_ASPECT_RATIO
@@ -22,7 +23,7 @@ class AspectRatioImageView @JvmOverloads constructor(
             val a = context.obtainStyledAttributes(attrs, R.styleable.AspectRatioImageView)
             aspectRatio =
                 a.getFloat(R.styleable.AspectRatioImageView_aspectRatio, DEFAULT_ASPECT_RATIO)
-            a.recycle()
+            a.recycle() // защита от неэффективного использования ресурсов
         }
     }
 
@@ -31,4 +32,6 @@ class AspectRatioImageView @JvmOverloads constructor(
         val newHeight = (measuredWidth / aspectRatio).toInt()
         setMeasuredDimension(measuredWidth, newHeight)
     }
+
 }
+

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.children
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_group.*
 import ru.skillbranch.devintensive.R
-import ru.skillbranch.devintensive.extensions.visible
 import ru.skillbranch.devintensive.models.data.UserItem
 import ru.skillbranch.devintensive.ui.adapters.UserAdapter
 import ru.skillbranch.devintensive.viewmodels.GroupViewModel
@@ -26,9 +26,9 @@ class GroupActivity : AppCompatActivity() {
     private lateinit var viewModel: GroupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
+
         initToolbar()
         initViews()
         initViewModel()
@@ -41,30 +41,33 @@ class GroupActivity : AppCompatActivity() {
         searchView.queryHint = "Введите имя пользователя"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.handleSearchQuery(query)
+                viewModel.handleSearchQuery(query!!)
                 return true
             }
 
-            override fun onQueryTextChange(query: String?): Boolean {
-                viewModel.handleSearchQuery(query)
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearchQuery(newText!!)
                 return true
             }
+
         })
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
+        return if (item.itemId == android.R.id.home) {
             finish()
             overridePendingTransition(R.anim.idle, R.anim.bottom_down)
-            return true
+            true
+        } else {
+            super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initToolbar() {
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDefaultDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
     private fun initViews() {
@@ -114,19 +117,17 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun updateChips(listUsers: List<UserItem>) {
-        chip_group.visible = !listUsers.isEmpty()
-
+        chip_group.visibility = if (listUsers.isEmpty()) View.GONE else View.VISIBLE
         val users = listUsers
-            .associateBy { user -> user.id }
+            .associate { user -> user.id to user }
             .toMutableMap()
 
-        val views = chip_group.children.associateBy { view -> view.tag }
+        val views = chip_group.children.associate { view -> view.tag to view }
 
-        for ((key, value) in views) {
-            if (!users.containsKey(key)) chip_group.removeView(value)
-            else users.remove(key)
+        for ((k, v) in views) {
+            if (!users.containsKey(k)) chip_group.removeView(v)
+            else users.remove(k)
         }
-
         users.forEach { (_, v) -> addChipToGroup(v) }
     }
 }

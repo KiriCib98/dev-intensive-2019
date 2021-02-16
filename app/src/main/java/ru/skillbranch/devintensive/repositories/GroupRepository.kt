@@ -12,8 +12,9 @@ object GroupRepository {
 
     fun createChat(items: List<UserItem>) {
         val ids = items.map { it.id }
-        val users = CacheManager.findUsersByIds(ids)
-        val title = users.map { it.firstName }.joinToString(", ")
+        val users = CacheManager.findUsersById(ids)
+        val title = users.map { it.firstName }.joinToString { ", " }
+
         val chat = Chat(CacheManager.nextChatId(), title, users)
         CacheManager.insertChat(chat)
     }

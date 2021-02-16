@@ -10,29 +10,38 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.data.ChatItem
 
-class ChatItemTouchCallback(
+class ChatItemTouchHelperCallback(
     private val adapter: ChatAdapter,
+    private val toArchive: Boolean = true,
     private val swipeListener: (ChatItem) -> Unit
 ) : ItemTouchHelper.Callback() {
 
     private val bgRect = RectF()
-    private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val bgPaint = Paint()
     private val iconBounds = Rect()
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
-    ): Int = if (viewHolder is ItemTouchViewHolder) {
-        makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.START)
-    } else {
-        makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.START)
+    ): Int {
+        return when (viewHolder) {
+            is ChatAdapter.ArchiveItemViewHolder -> makeFlag(
+                ItemTouchHelper.ACTION_STATE_IDLE,
+                ItemTouchHelper.START
+            )
+            is ItemTouchViewHolder -> makeFlag(
+                ItemTouchHelper.ACTION_STATE_SWIPE,
+                ItemTouchHelper.START
+            )
+            else -> makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.START)
+        }
     }
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
-    ) = false
+    ): Boolean = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         swipeListener.invoke(adapter.items[viewHolder.adapterPosition])
@@ -71,35 +80,41 @@ class ChatItemTouchCallback(
 
     private fun drawBackground(canvas: Canvas, itemView: View, dX: Float) {
         with(bgRect) {
-            left = itemView.left.toFloat()
+            left = dX // itemView.left.toFloat()
             top = itemView.top.toFloat()
             right = itemView.right.toFloat()
             bottom = itemView.bottom.toFloat()
         }
-
         with(bgPaint) {
             color = itemView.resources.getColor(R.color.color_primary_dark, itemView.context.theme)
         }
-
         canvas.drawRect(bgRect, bgPaint)
     }
 
     private fun drawIcon(canvas: Canvas, itemView: View, dX: Float) {
-        val icon = itemView.resources.getDrawable(
-            R.drawable.ic_archive_white_24dp,
-            itemView.context.theme
-        )
+        val icon =
+            if (toArchive)
+                itemView.resources.getDrawable(
+                    R.drawable.ic_archive_black_24dp,
+                    itemView.context.theme
+                )
+            else
+                itemView.resources.getDrawable(
+                    R.drawable.ic_unarchive_black_24dp,
+                    itemView.context.theme
+                )
+
         val iconSize = itemView.resources.getDimensionPixelSize(R.dimen.icon_size)
         val space = itemView.resources.getDimensionPixelSize(R.dimen.spacing_normal_16)
 
         val margin = (itemView.bottom - itemView.top - iconSize) / 2
+
         with(iconBounds) {
             left = itemView.right + dX.toInt() + space
             top = itemView.top + margin
             right = itemView.right + dX.toInt() + iconSize + space
             bottom = itemView.bottom - margin
         }
-
         icon.bounds = iconBounds
         icon.draw(canvas)
     }

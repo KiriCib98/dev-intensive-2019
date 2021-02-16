@@ -1,7 +1,5 @@
 package ru.skillbranch.devintensive.models
 
-import ru.skillbranch.devintensive.extensions.ImageMessage
-import ru.skillbranch.devintensive.extensions.TextMessage
 import ru.skillbranch.devintensive.models.data.Chat
 import ru.skillbranch.devintensive.models.data.User
 import java.util.*
@@ -10,14 +8,13 @@ abstract class BaseMessage(
     val id: String,
     val from: User,
     val chat: Chat,
-    val isIncoming: Boolean = true,
-    val date: Date = Date(),
-    var isReaded: Boolean = false
+    val isIncoming: Boolean = false,
+    val date: Date = Date()
 ) {
-
     abstract fun formatMessage(): String
 
     companion object AbstractFactory {
+
         var lastId = -1
 
         fun makeMessage(
@@ -30,25 +27,30 @@ abstract class BaseMessage(
         ): BaseMessage {
             lastId++
             return when (type) {
+//                TypeMessage.TEXT -> TextMessage("$lastId", from, chat, date = date, text = payload as String)
+//                TypeMessage.IMAGE -> ImageMessage("$lastId", from, chat, date = date, image = payload as String)
                 "image" -> ImageMessage(
                     "$lastId",
                     from,
                     chat,
-                    isIncoming,
-                    date,
-                    true,
-                    payload.toString()
+                    date = date,
+                    image = payload as String,
+                    isIncoming = isIncoming
                 )
                 else -> TextMessage(
                     "$lastId",
                     from,
                     chat,
-                    isIncoming,
-                    date,
-                    true,
-                    payload.toString()
+                    date = date,
+                    text = payload as String,
+                    isIncoming = isIncoming
                 )
             }
         }
     }
+
+//    enum class TypeMessage {
+//        TEXT,
+//        IMAGE
+//    }
 }

@@ -4,4 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:inputType="textPersonName"
-    android:maxWidth="9999dp" />
+    android:maxWidth="9999dp">
+
+</androidx.appcompat.widget.SearchView>
+    
+    

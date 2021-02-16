@@ -3,70 +3,71 @@ package ru.skillbranch.devintensive.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_user_list.*
 import ru.skillbranch.devintensive.R
-import ru.skillbranch.devintensive.extensions.visible
 import ru.skillbranch.devintensive.models.data.UserItem
-import ru.skillbranch.devintensive.ui.custom.CircleImageView
 
-class UserAdapter(
-    val listener: (UserItem) -> Unit
-) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter(private val listener: (UserItem) -> Unit) :
+    RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
-    var items = listOf<UserItem>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var items: List<UserItem> = listOf()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val convertView = inflater.inflate(R.layout.item_user_list, parent, false)
+        return UserViewHolder(convertView)
+    }
+
+    override fun getItemCount() = items.size
+
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) =
+        holder.bind(items[position], listener)
 
     fun updateData(data: List<UserItem>) {
         val diffCallback = object : DiffUtil.Callback() {
-            override fun areItemsTheSame(oldPos: Int, newPos: Int) =
+            override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean =
                 items[oldPos].id == data[newPos].id
 
-            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
-                items[oldPos] == data[newPos]
+            override fun areContentsTheSame(oldPos: Int, newPos: Int): Boolean =
+                items[oldPos].hashCode() == data[newPos].hashCode()
 
-            override fun getOldListSize() = items.size
-            override fun getNewListSize() = data.size
+            override fun getOldListSize(): Int = items.size
+
+            override fun getNewListSize(): Int = data.size
         }
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         items = data
         diffResult.dispatchUpdatesTo(this)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.item_user_list, parent, false)
-        return UserViewHolder(itemView)
-    }
-
-    override fun getItemCount() = items.size
-
-    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.bind(items[position], listener)
-    }
-
-    class UserViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class UserViewHolder(convertView: View) : RecyclerView.ViewHolder(convertView),
+        LayoutContainer {
+        override val containerView: View?
+            get() = itemView
 
         fun bind(user: UserItem, listener: (UserItem) -> Unit) {
+
             if (user.avatar != null) {
-                Glide.with(itemView)
-                        .load(user.avatar)
-                        .into(itemView.findViewById<CircleImageView>(R.id.iv_avatar_user))
+                Glide.with(itemView).load(user.avatar).into(iv_avatar_user)
             } else {
-                Glide.with(itemView)
-                        .clear(itemView.findViewById<CircleImageView>(R.id.iv_avatar_user))
-                itemView.findViewById<CircleImageView>(R.id.iv_avatar_user).initials = user.initials
+                Glide.with(itemView).clear(iv_avatar_user)
+                iv_avatar_user.setInitials(user.initials ?: "??")
             }
-            itemView.findViewById<View>(R.id.sv_indicator).visible = user.isOnline
-            itemView.findViewById<TextView>(R.id.tv_user_name).text = user.fullName
-            itemView.findViewById<TextView>(R.id.tv_last_activity).text = user.lastActivity
-            itemView.findViewById<ImageView>(R.id.iv_selected).visible = user.isSelected
-            itemView.setOnClickListener { listener.invoke(user) }
+            sv_indicator.visibility = if (user.isOnline) View.VISIBLE else View.GONE
+            tv_user_name.text = user.fullName
+            tv_last_activity.text = user.lastActivity
+            iv_selected.visibility = if (user.isSelected) View.VISIBLE else View.GONE
+
+            itemView.setOnClickListener {
+                listener.invoke(user)
+            }
         }
+
     }
 }

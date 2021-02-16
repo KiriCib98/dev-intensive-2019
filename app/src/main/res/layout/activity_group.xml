@@ -10,12 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
+        <!-- android:theme="@style/AppTheme.AppBarOverlay" -->
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/toolbar_title_group_activity" />
+        <!-- app:popupTheme="@style/AppTheme.PopupOverlay" -->
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -31,8 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_small_8"
             android:layout_marginBottom="@dimen/spacing_small_8"
-            android:paddingLeft="@dimen/spacing_normal_16"
-            android:paddingRight="@dimen/spacing_normal_16">
+            android:paddingStart="@dimen/spacing_normal_16"
+            android:paddingEnd="@dimen/spacing_normal_16"
+            android:visibility="gone">
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -40,7 +45,9 @@
             android:id="@+id/rv_user_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_user_list" />
+            tools:listitem="@layout/item_user_list">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 
@@ -53,7 +60,7 @@
         android:scaleX="0"
         android:scaleY="0"
         android:visibility="invisible"
-        app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
+        app:srcCompat="@drawable/ic_arrow_forward_black_24dp"
         tools:scaleX="1"
         tools:scaleY="1"
         tools:visibility="visible" />

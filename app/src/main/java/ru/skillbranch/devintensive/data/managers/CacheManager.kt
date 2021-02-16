@@ -1,5 +1,6 @@
 package ru.skillbranch.devintensive.data.managers
 
+import androidx.lifecycle.MutableLiveData
 import ru.skillbranch.devintensive.extensions.mutableLiveData
 import ru.skillbranch.devintensive.models.data.Chat
 import ru.skillbranch.devintensive.models.data.User
@@ -10,13 +11,15 @@ object CacheManager {
     private val chats = mutableLiveData(DataGenerator.stabChats)
     private val users = mutableLiveData(DataGenerator.stabUsers)
 
-    fun loadChats() = chats
+    fun loadChats(): MutableLiveData<List<Chat>> = chats
 
-    fun findUsersByIds(ids: List<String>): List<User> {
+    fun findUsersById(ids: List<String>): List<User> {
         return users.value!!.filter { ids.contains(it.id) }
     }
 
-    fun nextChatId() = "${chats.value!!.size}"
+    fun nextChatId(): String {
+        return "${chats.value!!.size}"
+    }
 
     fun insertChat(chat: Chat) {
         val copy = chats.value!!.toMutableList()

@@ -3,8 +3,8 @@ package ru.skillbranch.devintensive.viewmodels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import ru.skillbranch.devintensive.extensions.Profile
 import ru.skillbranch.devintensive.extensions.mutableLiveData
-import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
 import ru.skillbranch.devintensive.utils.Utils
 
